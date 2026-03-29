@@ -100,9 +100,8 @@ for i, ticker in enumerate(TICKERS):
 # 4. 수집된 데이터를 DataFrame으로 변환 및 CSV 저장
 df_final = pd.DataFrame(results)
 
-# 오늘 날짜로 파일명 생성 (예: japan_market_20260329.csv)
-today_str = datetime.today().strftime('%Y%m%d')
-file_name = f"japan_market_{today_str}.csv"
+# 항상 동일한 이름으로 덮어쓰기
+file_name = "japan_market_latest.csv"
 
 df_final.to_csv(file_name, index=False, encoding='utf-8-sig')
 
