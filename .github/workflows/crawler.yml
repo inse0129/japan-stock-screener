@@ -1,0 +1,41 @@
+name: Daily Stock Data Crawler
+
+# 로봇이 작동할 시간 설정
+on:
+  schedule:
+    # ⏱️ 시간 설정 (UTC 기준)
+    # 일본 시간(JST) 오후 4시 = UTC 오전 7시
+    # 월요일(1)부터 금요일(5)까지 매일 작동
+    - cron: '0 7 * * 1-5'
+  
+  # 수동으로 버튼을 눌러서 실행할 수 있게 해주는 마법의 주문
+  workflow_dispatch: 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest # 깃허브가 무료로 빌려주는 리눅스 컴퓨터
+
+    steps:
+    - name: 1. 내 저장소 코드 가져오기
+      uses: actions/checkout@v3
+
+    - name: 2. 파이썬 설치하기
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: 3. 필수 부품(라이브러리) 조립하기
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: 4. 🚀 크롤러 엔진 가동! (데이터 수집)
+      run: python data_maker.py
+
+    - name: 5. 💾 생성된 CSV 파일을 저장소에 업로드
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action Bot"
+        git add *.csv
+        git commit -m "Auto-update: 오늘의 일본 주식 데이터 봇 수집 완료" || echo "변경된 데이터가 없습니다."
+        git push
